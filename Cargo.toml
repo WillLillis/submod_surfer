@@ -1,0 +1,25 @@
+[package]
+name = "submod_surfer"
+version = "0.1.0"
+edition = "2021"
+description = "Command line utility to fuzzy find submodules within a git project"
+repository = "https://github.com/WillLillis/submod_surfer"
+keywords = ["git", "fuzzy-find", "submodule", "tooling"]
+categories = ["command-line-utilities", "development-tools"]
+license = "MIT"
+
+
+[dependencies]
+anyhow = "1.0.93"
+clap = { version = "4.5.20", features = ["derive"] }
+dialoguer = { version = "0.11.0", features = ["fuzzy-select"] }
+
+[lints.clippy]
+dbg_macro = "deny"
+todo = "deny"
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+
+multiple_crate_versions = "allow"
