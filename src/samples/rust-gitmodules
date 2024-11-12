@@ -15,6 +15,7 @@
 	url = https://github.com/rust-lang/book.git
 	shallow = true
 [submodule "src/doc/rust-by-example"]
+    },
 	path = src/doc/rust-by-example
 	url = https://github.com/rust-lang/rust-by-example.git
 	shallow = true
@@ -54,8 +55,4 @@
 [submodule "src/gcc"]
 	path = src/gcc
 	url = https://github.com/rust-lang/gcc.git
-	shallow = true
-[submodule "no-separators"]
-	path = src/
-	url = https://github.com/rust-lang/rust-by-example.git
 	shallow = true

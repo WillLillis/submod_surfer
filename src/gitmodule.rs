@@ -8,7 +8,7 @@ const BRANCH_ASSIGN: &str = "branch = ";
 
 pub type Gitmodule = Vec<Submodule>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Submodule {
     pub name: String,
     pub path: PathBuf,
@@ -55,6 +55,11 @@ impl Submodule {
 }
 
 pub fn get_gitmodules(path: &PathBuf) -> Result<Gitmodule> {
+    let contents = std::fs::read_to_string(path)?;
+    Ok(parse_gitmodules(&contents))
+}
+
+fn parse_gitmodules(contents: &str) -> Gitmodule {
     let clear_state = |name: &mut Option<String>,
                        path: &mut Option<PathBuf>,
                        url: &mut Option<String>,
@@ -65,7 +70,6 @@ pub fn get_gitmodules(path: &PathBuf) -> Result<Gitmodule> {
         *branch = None;
     };
 
-    let contents = std::fs::read_to_string(path)?;
     let mut gitmodules = Gitmodule::new();
 
     let mut is_invalid = false; // use to skip past entries with invalid info
@@ -126,5 +130,142 @@ pub fn get_gitmodules(path: &PathBuf) -> Result<Gitmodule> {
         gitmodules.push(module);
     }
 
-    Ok(gitmodules)
+    gitmodules
+}
+
+#[cfg(test)]
+mod tests {
+    use anyhow::Result;
+    use std::path::PathBuf;
+
+    use crate::gitmodule::{get_gitmodules, Submodule};
+
+    #[test]
+    fn it_renders_submodules_correctly() {
+        let sample1 = Submodule {
+            name: "NameWithoutSlashes".to_string(),
+            path: PathBuf::from("/"),
+            url: "www.example.com".to_string(),
+            branch: None,
+        };
+        assert_eq!(sample1.display_fmt("%n"), "NameWithoutSlashes");
+        assert_eq!(sample1.display_fmt("%N"), "NameWithoutSlashes");
+        assert_eq!(sample1.display_fmt("%p"), "/");
+        assert_eq!(sample1.display_fmt("%u"), "www.example.com");
+        assert_eq!(sample1.display_fmt("%b"), "");
+        assert_eq!(sample1.display_fmt("%n (%b)"), "NameWithoutSlashes ()");
+
+        let sample2 = Submodule {
+            name: "Name/With/Slashes".to_string(),
+            path: PathBuf::from("/"),
+            url: "../../somethingfunky.git".to_string(),
+            branch: Some("my-feature-branch".to_string()),
+        };
+        assert_eq!(sample2.display_fmt("%n"), "Slashes");
+        assert_eq!(sample2.display_fmt("%N"), "Name/With/Slashes");
+        assert_eq!(sample2.display_fmt("%p"), "/");
+        assert_eq!(sample2.display_fmt("%u"), "../../somethingfunky.git");
+        assert_eq!(sample2.display_fmt("%b"), "my-feature-branch");
+        assert_eq!(
+            sample2.display_fmt("%n (%b)"),
+            "Slashes (my-feature-branch)"
+        );
+    }
+
+    #[test]
+    fn it_parses_gitmodules_correctly() -> Result<()> {
+        let gitmodules = get_gitmodules(&PathBuf::from("src/samples/rust-gitmodules"))?;
+        let expected = vec![
+            Submodule {
+                name: "src/doc/nomicon".to_string(),
+                path: PathBuf::from("src/doc/nomicon"),
+                url: "https://github.com/rust-lang/nomicon.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/tools/cargo".to_string(),
+                path: PathBuf::from("src/tools/cargo"),
+                url: "https://github.com/rust-lang/cargo.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/doc/reference".to_string(),
+                path: PathBuf::from("src/doc/reference"),
+                url: "https://github.com/rust-lang/reference.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/doc/book".to_string(),
+                path: PathBuf::from("src/doc/book"),
+                url: "https://github.com/rust-lang/book.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/doc/rust-by-example".to_string(),
+                path: PathBuf::from("src/doc/rust-by-example"),
+                url: "https://github.com/rust-lang/rust-by-example.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "library/stdarch".to_string(),
+                path: PathBuf::from("library/stdarch"),
+                url: "https://github.com/rust-lang/stdarch.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/doc/rustc-dev-guide".to_string(),
+                path: PathBuf::from("src/doc/rustc-dev-guide"),
+                url: "https://github.com/rust-lang/rustc-dev-guide.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/doc/edition-guide".to_string(),
+                path: PathBuf::from("src/doc/edition-guide"),
+                url: "https://github.com/rust-lang/edition-guide.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/llvm-project".to_string(),
+                path: PathBuf::from("src/llvm-project"),
+                url: "https://github.com/rust-lang/llvm-project.git".to_string(),
+                branch: Some("rustc/19.1-2024-09-17".to_string()),
+            },
+            Submodule {
+                name: "src/doc/embedded-book".to_string(),
+                path: PathBuf::from("src/doc/embedded-book"),
+                url: "https://github.com/rust-embedded/book.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "library/backtrace".to_string(),
+                path: PathBuf::from("library/backtrace"),
+                url: "https://github.com/rust-lang/backtrace-rs.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/tools/rustc-perf".to_string(),
+                path: PathBuf::from("src/tools/rustc-perf"),
+                url: "https://github.com/rust-lang/rustc-perf.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/tools/enzyme".to_string(),
+                path: PathBuf::from("src/tools/enzyme"),
+                url: "https://github.com/EnzymeAD/Enzyme.git".to_string(),
+                branch: None,
+            },
+            Submodule {
+                name: "src/gcc".to_string(),
+                path: PathBuf::from("src/gcc"),
+                url: "https://github.com/rust-lang/gcc.git".to_string(),
+                branch: None,
+            },
+        ];
+
+        assert_eq!(gitmodules.len(), expected.len());
+        for (parsed, expected) in gitmodules.iter().zip(expected.iter()) {
+            assert_eq!(*parsed, *expected);
+        }
+        Ok(())
+    }
 }

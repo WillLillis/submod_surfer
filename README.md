@@ -41,5 +41,6 @@ alias other_surf="source /path/to/subsurfer.sh --module-path /absolute/path/to/p
 ```
 
 ## TODO
-- Testing!
+- Add more tests
+- Address user feedback
 
