@@ -9,8 +9,7 @@ Surf through the submodules of your project with ease!
 # Installation
 
 1. Build the `submod_surfer` crate (`cargo build --release`).
-2. Modify `subsurfer.sh`, replacing `<INSTALL_PATH>` with a path to the binary
-from step 1.
+2. `source env.sh`
 
 # Usage
 
