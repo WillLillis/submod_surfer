@@ -39,6 +39,7 @@ alias surf="submod_surfer --module-path /absolute/path/to/project --fmt %p"
 ```
 
 ## TODO
+- The tool does not work inside git bash's terminal emulator. This needs to be investigated further
 - More cleanup with shell integration
 - Add more tests
 - Address user feedback
