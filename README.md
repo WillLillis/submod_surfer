@@ -16,9 +16,8 @@ Surf through the submodules of your project with ease!
 The `submod_surfer` binary isn't intended to be used directly. Rather, it only handles the
 user fuzzy finding over the submodules in their git project. Once a choice has been
 made, the program outputs the path to said submodule and exits. This path is then
-used by the `subsurfer.sh` script to change into the desired directory. In order
-to use this tool, please *source* the `subsurfer.sh` script. Any arguments passed
-while sourcing the script will be forwarded to the binary as one would expect.
+used by the shell function defined in `env.sh` script to change into the desired
+directory. In order to use this tool, please *source* the `env.sh` script.
 
 ```
 $ submod_surfer --help
@@ -36,10 +35,11 @@ That's it! It's common to utilize the `module-path` argument alongside a shell a
 so you can surf even while outside of your project's root directory. For example,
 
 ```shell
-alias other_surf="source /path/to/subsurfer.sh --module-path /absolute/path/to/project"
+alias surf="submod_surfer --module-path /absolute/path/to/project --fmt %p"
 ```
 
 ## TODO
+- More cleanup with shell integration
 - Add more tests
 - Address user feedback
 
