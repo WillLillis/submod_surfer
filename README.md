@@ -13,11 +13,12 @@ Surf through the submodules of your project with ease!
 
 # Usage
 
-The `submod_surfer` binary isn't intended to be used directly. Rather, it only handles the
-user fuzzy finding over the submodules in their git project. Once a choice has been
-made, the program outputs the path to said submodule and exits. This path is then
-used by the shell function defined in `env.sh` script to change into the desired
-directory. In order to use this tool, please *source* the `env.sh` script.
+The `submod_surfer` binary isn't intended to be invoked directly. Rather, it only
+handles the user's fuzzy finding over the submodules of their git project. Once a
+choice has been made, the program outputs the path to said submodule and exits.
+This path is then used by the shell function defined in `env.sh` script to change
+into the desired directory. In order to use this tool, please *source* the `env.sh`
+script.
 
 ```
 $ submod_surfer --help
@@ -28,7 +29,7 @@ Options:
   -f, --fmt <FMT>                  Default: "%n", Name: %n or %N, Path: %p, Url: %u, Branch: %b
   -h, --help                       Print help
 
-$ source /path/to/subsurfer.sh
+$ source /path/to/env.sh
 ```
 
 That's it! It's common to utilize the `module-path` argument alongside a shell alias
@@ -40,7 +41,7 @@ alias surf="submod_surfer --module-path /absolute/path/to/project --fmt %p"
 
 ## TODO
 - The tool does not work inside git bash's terminal emulator. This needs to be investigated further
-- More cleanup with shell integration
+- More cleanup with shell integration (Shells besides zsh and Bash)
 - Add more tests
 - Address user feedback
 
